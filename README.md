@@ -1,67 +1,63 @@
-# Music Generation with Neural Networks
+# Efficient Harmonic Music Generator
 
-This project implements a neural network-based music generation system using PyTorch. It can process MIDI files, train a model on them, and generate new musical pieces.
+A deep learning model for generating harmonic music sequences using an efficient architecture. This project uses PyTorch to train a neural network on MIDI files to generate new musical pieces while maintaining harmonic consistency.
 
-## Project Structure
+## Features
 
-```
-.
-├── src/
-│   ├── data_processing/    # Data preparation and processing scripts
-│   ├── model/             # Neural network model definitions
-│   ├── utils/             # Utility functions and helpers
-│   └── visualization/     # Music visualization and playback tools
-├── data/                  # Directory for training data
-├── checkpoints/           # Model checkpoints
-├── generated/             # Generated music output
-└── output/               # Other output files
-```
+- Efficient neural network architecture optimized for music generation
+- MIDI file processing and tokenization
+- Training with support for MPS (Apple Silicon) acceleration
+- Checkpoint saving and loading for interrupted training
+- Configurable model parameters
 
-## Setup
+## Requirements
 
-1. Create a virtual environment:
+- Python 3.8+
+- PyTorch
+- Additional dependencies in `requirements.txt`
+
+## Installation
+
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# Clone the repository
+git clone https://github.com/[your-username]/music-net-experiments.git
+cd music-net-experiments
 
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ## Usage
 
-### Data Preparation
-1. Place your MIDI files in the `data` directory
-2. Run the data preparation script:
-```bash
-python src/data_processing/prepare_dataset.py
-```
-
 ### Training
-To train the model:
+
 ```bash
-python src/train.py
+python train_efficient.py --dataset path/to/dataset \
+                         --batch-size 16 \
+                         --sequence-length 4 \
+                         --embedding-dim 16 \
+                         --hidden-size 32 \
+                         --learning-rate 0.1 \
+                         --num-epochs 1000
 ```
 
 ### Generation
-To generate new music:
+
 ```bash
-python src/generate_music.py
+python generate_efficient.py --model-path path/to/model.pt \
+                           --output output.mid \
+                           --length 1000
 ```
 
-### Visualization
-To visualize the music:
-```bash
-python src/visualization/visualize_music.py
-```
+## Project Structure
 
-## Dependencies
-- PyTorch: Deep learning framework
-- NumPy: Numerical computations
-- pretty_midi: MIDI file processing
-- pygame: Audio playback
+- `src/`: Source code
+  - `model/`: Neural network architecture
+  - `data_processing/`: MIDI processing and dataset preparation
+- `train_efficient.py`: Training script
+- `generate_efficient.py`: Generation script
+- `requirements.txt`: Python dependencies
 
 ## License
+
 MIT License 
