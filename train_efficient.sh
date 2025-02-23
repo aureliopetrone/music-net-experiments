@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Hyperparametri configurabili con valori di default
+# Hyperparametri configurabili con valori ottimizzati
 DATASET=${DATASET:-"output/music_dataset.pt"}
-NUM_EPOCHS=${NUM_EPOCHS:-10000}  # Aumentato a 10000 epoche
-BATCH_SIZE=${BATCH_SIZE:-64}
-EMBEDDING_DIM=${EMBEDDING_DIM:-32}  # Ridotto da 128 a 32
-HIDDEN_SIZE=${HIDDEN_SIZE:-64}  # Ridotto da 256 a 64
-LEARNING_RATE=${LEARNING_RATE:-1.0}  # Learning rate estremo!
-SEQUENCE_LENGTH=${SEQUENCE_LENGTH:-32}
+NUM_EPOCHS=${NUM_EPOCHS:-200}  # Ridotto con early stopping consigliato
+BATCH_SIZE=${BATCH_SIZE:-128}  # Aumentato per sfruttare la GPU
+EMBEDDING_DIM=${EMBEDDING_DIM:-64}  # Compromesso tra capacità e leggerezza
+HIDDEN_SIZE=${HIDDEN_SIZE:-128}  # Aumentato per maggior capacità
+LEARNING_RATE=${LEARNING_RATE:-0.001}  # Valore stabile e comune per LSTM
+SEQUENCE_LENGTH=${SEQUENCE_LENGTH:-64}  # Per dipendenze più lunghe
 FORCE_CPU=${FORCE_CPU:-false}
-TIME_LIMIT_HOURS=${TIME_LIMIT_HOURS:-24}  # Aumentato a 24 ore
+TIME_LIMIT_HOURS=${TIME_LIMIT_HOURS:-12}  # Ridotto, sufficiente con GPU
 
 # Controlla se esiste l'ultimo checkpoint
 LAST_CHECKPOINT="checkpoints/last/last_model.pt"
@@ -59,4 +59,4 @@ fi
 echo "Esecuzione comando:"
 echo "$CMD"
 echo
-eval "$CMD" 
+eval "$CMD"

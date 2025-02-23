@@ -71,10 +71,26 @@ def main(args):
     else:
         model.load_state_dict(checkpoint)
     
+    # Load seed sequence if specified
+    seed_sequence = None
+    if args.seed_file:
+        with open(args.seed_file, 'r') as f:
+            lines = f.readlines()
+            if 0 < args.seed_line <= len(lines):
+                seed_line = lines[args.seed_line - 1].strip()
+                notes = seed_line.split(',')
+                if len(notes) == 4:  # Ensure we have exactly 4 notes
+                    device = torch.device("cuda" if torch.cuda.is_available() and not args.force_cpu else "cpu")
+                    tokenizer = MusicTokenizer(max_vocab_size=128)
+                    indices = [tokenizer.note_to_id.get(note.strip(), 0) for note in notes]
+                    seed_sequence = torch.tensor([indices], dtype=torch.long, device=device).unsqueeze(1)
+                    print(f"Using seed sequence: {notes}")
+
     generated_sequence = generate_music(
         model,
         tokenizer,
         device,
+        seed_sequence=seed_sequence,  # Pass the seed sequence
         num_steps=args.num_steps,
         temperature=args.temperature,
         sequence_length=32  # Match training
@@ -99,9 +115,27 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=str, default='output/generated_sequence.txt')
     parser.add_argument('--num-steps', type=int, default=64)
     parser.add_argument('--temperature', type=float, default=0.8)
-    parser.add_argument('--embedding-dim', type=int, default=32)
-    parser.add_argument('--hidden-size', type=int, default=64)
+    parser.add_argument('--embedding-dim', type=int, default=128)
+    parser.add_argument('--hidden-size', type=int, default=256)
     parser.add_argument('--force-cpu', action='store_true')
+    parser.add_argument('--seed-file', type=str, help='File containing the initial sequence')
+    parser.add_argument('--seed-line', type=int, default=1, help='Line number to use from seed file (1-based)')
     
     args = parser.parse_args()
+
+    # Load seed sequence if specified
+    seed_sequence = None
+    if args.seed_file:
+        with open(args.seed_file, 'r') as f:
+            lines = f.readlines()
+            if 0 < args.seed_line <= len(lines):
+                seed_line = lines[args.seed_line - 1].strip()
+                notes = seed_line.split(',')
+                if len(notes) == 4:  # Ensure we have exactly 4 notes
+                    device = torch.device("cuda" if torch.cuda.is_available() and not args.force_cpu else "cpu")
+                    tokenizer = MusicTokenizer(max_vocab_size=128)
+                    indices = [tokenizer.note_to_id.get(note.strip(), 0) for note in notes]
+                    seed_sequence = torch.tensor([indices], dtype=torch.long, device=device).unsqueeze(1)
+                    print(f"Using seed sequence: {notes}")
+
     main(args)

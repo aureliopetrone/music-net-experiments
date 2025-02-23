@@ -1,4 +1,8 @@
-torch>=2.1.0
-numpy>=1.24.0
-pretty_midi>=0.2.10
-pygame>=2.5.0 
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch
+torchvision
+torchaudio
+numpy
+pretty_midi
+pygame 
+scipy

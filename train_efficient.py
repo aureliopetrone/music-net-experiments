@@ -21,9 +21,10 @@ from src.model.music_net import EfficientHarmonicMusicNet
 from src.model.tokenizer import MusicTokenizer
 from src.data_processing.prepare_dataset import prepare_dataloaders
 
-# Ottimizzazioni per MPS
-if hasattr(torch.backends, 'mps'):
-    torch.backends.mps.enable_tdz = False  # Disabilita TDZ per migliori performance
+# Ottimizzazioni per CUDA
+if torch.cuda.is_available():
+    torch.backends.cuda.matmul.allow_tf32 = True  # Abilita TF32 per migliori performance
+    torch.backends.cudnn.benchmark = True  # Ottimizza le operazioni CUDA
 
 # Calcola il numero ottimale di workers
 NUM_WORKERS = min(8, multiprocessing.cpu_count())
@@ -49,8 +50,8 @@ def validate(model, val_loader, criterion, device):
     return total_loss / len(val_loader)
 
 def train_model(model, train_loader, val_loader, num_epochs, learning_rate, start_epoch=0, checkpoint_path=None):
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    print(f"Using {'MPS' if device.type == 'mps' else 'CPU'} device")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using {'CUDA' if device.type == 'cuda' else 'CPU'} device")
     
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
@@ -118,8 +119,8 @@ def train_model(model, train_loader, val_loader, num_epochs, learning_rate, star
 
 def main(args):
     # Set device
-    device = torch.device("mps" if torch.backends.mps.is_available() and not args.force_cpu else "cpu")
-    print(f"Using {'MPS' if device.type == 'mps' else 'CPU'} device")
+    device = torch.device("cuda" if torch.cuda.is_available() and not args.force_cpu else "cpu")
+    print(f"Using {'CUDA' if device.type == 'cuda' else 'CPU'} device")
 
     # Load data
     train_loader, val_loader = prepare_dataloaders(
